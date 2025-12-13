@@ -4,13 +4,34 @@ import os
 import hashlib
 import logging
 
+from chromadb import HttpClient as ChromaHttpClient
+from chromadb.utils.embedding_functions.ollama_embedding_function import OllamaEmbeddingFunction
+
 from pathlib import Path
 from typing import Any
 
 MD_REPO = os.getenv("MD_REPO", "../mount/md")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434") # http://ollama:11434
+OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "mxbai-embed-large")
+CHROMA_HOST = os.getenv("CHROMA_HOST", "http://localhost:8000") # http://chroma:8000
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def create_collection(collection_name: str) -> list:
+    chroma_host, chroma_port = CHROMA_HOST.replace("http://", "").split(':', 1)
+    chroma_client = ChromaHttpClient(
+        host=chroma_host,
+        port=chroma_port,
+        ssl=False
+    )
+    chroma_client.heartbeat()
+
+    embedding_function = OllamaEmbeddingFunction(
+        url=OLLAMA_HOST,
+        model_name=OLLAMA_EMBED_MODEL
+    )
+    return chroma_client.create_collection(name=collection_name, embedding_function=embedding_function)
 
 def hash_string_utf8(string: str) -> str:
     hasher = hashlib.sha256()
@@ -47,6 +68,8 @@ def chunk_hierarchical_text(document: str, max_tokens: int = 1800) -> Any:
                 n += 1
 
 def main():
+    notes_collection = create_collection("notes")
+
     logger.info(f"Iterating through {MD_REPO}")
     
     n_files = 0
@@ -62,6 +85,12 @@ def main():
             data[0].append(identifier)
             data[1].append(chunk)
             data[2].append({ "source": file_path, "revision": i, "title": Path(file_path).stem })
+
+        notes_collection.add(
+            documents=data[1],
+            metadatas=data[2],
+            ids=data[0],
+        )
 
         n_files += 1
     
