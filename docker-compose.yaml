@@ -44,9 +44,9 @@ services:
       - OLLAMA_MODEL_TEMPERATURE=0.5
       - OLLAMA_HOST=http://ollama:11434
       - CHROMA_HOST=http://chroma:8000
-      - MD_REPO=/app/md-repo
+      - MD_REPO=/app/md
     volumes:
-      - ./mount/md:/app/md-repo:ro
+      - ./mount/md:/app/md:ro
     networks:
       - ollama-docker
     depends_on:
