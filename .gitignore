@@ -1,18 +1,13 @@
 # Project data (required)
 mount/
 
-# Python artifacts (used by `local-ai-ui-fastapi` and `obsidian-md-rag`)
+# Python artifacts
 __pycache__/
 *.py[cod]
 *$py.class
 .venv/
 venv/
 env/
-
-# Node builds (used by `local-ai-ui-react` and `local-ai-ui-gradio`)
-node_modules/
-dist/
-*.log
 
 # IDE/editor metadata
 .vscode/
