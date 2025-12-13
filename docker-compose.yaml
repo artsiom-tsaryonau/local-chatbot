@@ -1,9 +1,11 @@
 services:
   ollama:
-    profiles: ["llm", "obsidian"]
+    profiles: ["llm", "obsidian", "gradio"]
     image: ollama/ollama:latest
     pull_policy: always
     container_name: ollama
+    environment:
+      - OLLAMA_DEBUG=0
     volumes:
       - ./mount/ollama:/root/.ollama
       - ./entrypoint.sh:/entrypoint.sh
@@ -21,7 +23,7 @@ services:
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
 
   chromadb:
-    profiles: ["obsidian", "chroma"]
+    profiles: ["obsidian", "chroma", "gradio"]
     image: chromadb/chroma
     pull_policy: always
     container_name: chroma
@@ -47,6 +49,24 @@ services:
       - MD_REPO=/app/md
     volumes:
       - ./mount/md:/app/md:ro
+    networks:
+      - ollama-docker
+    depends_on:
+      - chromadb
+      - ollama
+
+  gradio-ui:
+    profiles: ["obsidian", "gradio"]
+    build:
+      context: /home/atsaryonau/projects/local-chatbot/chat-ui
+      dockerfile: Dockerfile
+    container_name: gradio
+    environment:
+      - CHROMA_HOST=http://chroma:8000
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2:3b
+      - OLLAMA_EMBED_MODEL=mxbai-embed-large
+    ports: ["7860:7860"]
     networks:
       - ollama-docker
     depends_on:
