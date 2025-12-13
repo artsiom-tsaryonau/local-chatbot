@@ -1,0 +1,35 @@
+# Project data (required)
+mount/
+
+# Python artifacts (used by `local-ai-ui-fastapi` and `obsidian-md-rag`)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Node builds (used by `local-ai-ui-react` and `local-ai-ui-gradio`)
+node_modules/
+dist/
+*.log
+
+# IDE/editor metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Candidates to review (not observed in repo)
+.docker/
+.Python
+*.egg-info/
+*.egg
+*.so
+*.tmp
+*.bak

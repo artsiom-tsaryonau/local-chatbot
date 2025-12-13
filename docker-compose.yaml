@@ -1,0 +1,37 @@
+services:
+  ollama:
+    profiles: ["llm", "obsidian"]
+    image: ollama/ollama:latest
+    pull_policy: always
+    container_name: ollama
+    volumes:
+      - ./mount/ollama:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh
+    ports: ["11434:11434"]
+    tty: true
+    networks:
+      - ollama-docker
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all 
+              capabilities: [gpu]
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+
+  chromadb:
+    profiles: ["obsidian", "chroma"]
+    image: chromadb/chroma
+    pull_policy: always
+    container_name: chroma
+    volumes:
+      - ./mount/chromadb:/chromadb
+    ports: ["8000:8000"]
+    tty: true
+    networks:
+      - ollama-docker
+
+networks:
+  ollama-docker:
+    external: false
