@@ -61,6 +61,7 @@ def chunk_hierarchical_text(document: str, max_tokens: int = 1800) -> Any:
     n = 0
     for subsection in subsections:
         words = subsection.split()
+        logger.debug(f"Number of words: {len(words)}")
         for i in range(0, len(words), max_tokens):
             chunk = ' '.join(words[i:i + max_tokens])
             if chunk.strip():
