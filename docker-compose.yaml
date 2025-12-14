@@ -2,7 +2,6 @@ services:
   ollama:
     profiles: ["llm", "obsidian", "gradio"]
     image: ollama/ollama:latest
-    pull_policy: always
     container_name: ollama
     environment:
       - OLLAMA_DEBUG=0
@@ -25,7 +24,6 @@ services:
   chromadb:
     profiles: ["obsidian", "chroma", "gradio"]
     image: chromadb/chroma
-    pull_policy: always
     container_name: chroma
     volumes:
       - ./mount/chromadb:/chromadb
