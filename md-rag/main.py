@@ -31,6 +31,7 @@ def create_collection(collection_name: str) -> list:
         url=OLLAMA_HOST,
         model_name=OLLAMA_EMBED_MODEL
     )
+    logger.debug(f"Creating collection {collection_name}")
     return chroma_client.create_collection(name=collection_name, embedding_function=embedding_function)
 
 def hash_string_utf8(string: str) -> str:
@@ -75,7 +76,7 @@ def main():
     
     n_files = 0
     for file_path, file_content in iterate_and_read(f"{MD_REPO}/**/*.md"):
-        logging.info(f"Processing {file_path}")
+        logging.debug(f"Processing {file_path}")
 
         path_hex = hash_string_utf8(file_path) # create a unique hash for specific file
         
