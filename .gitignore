@@ -1,5 +1,6 @@
 # Project data (required)
-mount/
+mount/chromadb/
+mount/ollama/
 
 # Python artifacts
 __pycache__/
